@@ -17,8 +17,9 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
     dateOfBirth: '',
     gender: '',
     race: '',
+    sex_at_birth:'',
     ethnicity: '',
-    sexOrientation: '',
+    genderIdentity: '',
     language: '',
     phoneNumber: '',
     email: '',
@@ -99,6 +100,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   <MenuItem value="male">Male</MenuItem>
                   <MenuItem value="female">Female</MenuItem>
                   <MenuItem value="other">Other</MenuItem>
+                  <MenuItem value="unknown">Unknown</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -112,10 +114,13 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   value={formData.race}
                   onChange={handleChange}
                 >
-                  <MenuItem value="white">White</MenuItem>
-                  <MenuItem value="black">Black</MenuItem>
-                  <MenuItem value="hispanic">Hispanic</MenuItem>
+                  <MenuItem value="american_indian_or_alaska_native">American Indian or Alaska Native</MenuItem>
                   <MenuItem value="asian">Asian</MenuItem>
+                  <MenuItem value="black_or_african_american">Black or African American</MenuItem>
+                  <MenuItem value="native_hawaiian_or_other_pacific_islander">Native Hawaiian or Other Pacific Islander</MenuItem>
+                  <MenuItem value="white">White</MenuItem>
+                  <MenuItem value="asked_but_unknown">Asked but unknown</MenuItem>
+                  <MenuItem value="unknown">Unknown</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -129,21 +134,52 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   value={formData.ethnicity}
                   onChange={handleChange}
                 >
-                  <MenuItem value="hispanic">Hispanic</MenuItem>
-                  <MenuItem value="non-hispanic">Non-Hispanic</MenuItem>
+                  <MenuItem value="hispanic">Hispanic or Latino</MenuItem>
+                  <MenuItem value="non-hispanic">Not Hispanic or Latino</MenuItem>
+                  <MenuItem value="asked_but_unknown">Asked but unknown</MenuItem>
+                  <MenuItem value="unknown">Unknown</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={6}>
-              <TextField
-                required
-                fullWidth
-                label="Sex Orientation"
-                variant="outlined"
-                name="sexOrientation"
-                value={formData.sexOrientation}
-                onChange={handleChange}
-              />
+              <FormControl fullWidth>
+                <InputLabel id="sex_at_birth">Sex at Birth</InputLabel>
+                <Select
+                  labelId="sex_at_birth-label"
+                  label="Sex_at_Birth"
+                  name="sex_at_birth"
+                  value={formData.sex_at_birth}
+                  onChange={handleChange}
+                >
+                  <MenuItem value="male">Male</MenuItem>
+                  <MenuItem value="female">Female</MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
+                  <MenuItem value="asked_but_unknown">Asked but unknown</MenuItem>
+                  <MenuItem value="unknown">Unknown</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <InputLabel id="gender_identity">Gender Identity</InputLabel>
+                <Select
+                  labelId="gender_identity-label"
+                  label="Gender_identity"
+                  name="genderIdentity"
+                  value={formData.genderIdentity}
+                  onChange={handleChange}
+                >
+                  <MenuItem value="identifies_as_nonbinary_gender">Identifies as nonbinary gender</MenuItem>
+                  <MenuItem value="male-to-female_transsexual">Male-to-female transsexual</MenuItem>
+                  <MenuItem value="female-to-male_transsexual">Female-to-male transsexual</MenuItem>
+                  <MenuItem value="identifies_as_non-conforming_gender">Identifies as non-conforming gender</MenuItem>
+                  <MenuItem value="identifies_as_female_gender">Identifies as female gender</MenuItem>
+                  <MenuItem value="identifies_as_male_gender">Identifies as male gender</MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
+                  <MenuItem value="unknown">Unknown</MenuItem>
+                  <MenuItem value="asked_but_unknown">Asked but unknown</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={6}>
               <FormControl fullWidth>

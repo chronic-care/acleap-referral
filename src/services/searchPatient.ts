@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const URL = "http://localhost:3000"
+const URL = process.env.REACT_APP_BACKEND_API_URL;
 
 const getPatientSearch = async (lastName: string, dateOfBirth: string) => {
     try {

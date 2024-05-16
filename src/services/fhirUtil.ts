@@ -23,6 +23,8 @@ export const transformPatient = (patient: any): ACLPatient => {
     const gender = patient.gender ? patient.gender?.charAt(0).toUpperCase() + patient.gender.slice(1) : undefined;
 
     const dob = patient.birthDate ? new Date(patient.birthDate) : undefined;
+    const dateOfBirth = patient.birthDate ? moment( patient.birthDate ).format('MM/DD/YYYY') : undefined;
+
     const ageDiffMs = dob ? Date.now() - dob.getTime() : undefined;
     const ageDate = ageDiffMs ? new Date(ageDiffMs) : undefined;
     const age = ageDate ? Math.abs(ageDate.getUTCFullYear() - 1970).toString() : undefined;
@@ -40,7 +42,7 @@ export const transformPatient = (patient: any): ACLPatient => {
         fullName: name,
         firstName,
         lastName,
-        birthDate: dob?.toLocaleDateString(),
+        birthDate: dateOfBirth,
         gender,
         age: parseInt(age ?? '0'),
         ethnicity,

@@ -22,7 +22,7 @@ const Home = () => {
                     <Tab label="CREATE REFERRALS" />
                 </Tabs>
                 <TabPanel value={value} index={0}>
-                    <Card variant="outlined" sx={{ padding: '16px', marginBottom: '24px' }}>
+                    <Card variant="outlined" sx={{ padding: '16px', marginBottom: '24px', width : 1150 }}>
                         <Grid container spacing={2}>
                             <Grid item sm={12} md={12} overflow={'auto'}>
                                 <NewReferrals />

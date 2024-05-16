@@ -56,6 +56,8 @@ const NewReferrals = () => {
     const [selectedPatient, setSelectedPatient] = React.useState<ACLPatient  | undefined>({})
     const [selectedService, setSelectedService] = React.useState<ACLServiceRequest  | undefined>({})
     const [selectedTask, setSelectedTask] = React.useState<ACLTasks  | undefined>({})
+    const [loading, setLoading] = React.useState(true);
+
 
       React.useEffect(() => {
         getData();
@@ -121,6 +123,7 @@ const NewReferrals = () => {
         });
 
         setServices(data)
+        setLoading(false)
     }
 
     const handleRowClick = (row:{row: ACLPatient}) => {
@@ -169,6 +172,7 @@ const NewReferrals = () => {
                   handleRowClick(e)
               }}
                 columns={columns}
+                loading={loading}
                 getRowId={(row) => row.id}
                 initialState={{
                 pagination: {
