@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import {
   TextField, Button, Select, MenuItem, InputLabel, FormControl, Grid, Box,
   Dialog, DialogTitle, DialogContent, DialogActions, Typography,
-  Divider
+  Divider,
+  Tooltip
 } from '@mui/material';
 
 type PatientCreationDialogProps = {
@@ -15,11 +16,12 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
     firstName: '',
     lastName: '',
     dateOfBirth: '',
-    gender: '',
+    administrativeGender: '',
     race: '',
     sex_at_birth:'',
     ethnicity: '',
     genderIdentity: '',
+    sexualOrientation: '',
     language: '',
     phoneNumber: '',
     email: '',
@@ -89,18 +91,25 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
             </Grid>
             <Grid item xs={6}>
               <FormControl fullWidth>
-                <InputLabel id="gender-label">Gender</InputLabel>
+                <InputLabel id="language-label">Language</InputLabel>
                 <Select
-                  labelId="gender-label"
-                  label="Gender"
-                  name="gender"
-                  value={formData.gender}
+                  labelId="language-label"
+                  label="Language"
+                  name="language"
+                  value={formData.language}
                   onChange={handleChange}
                 >
-                  <MenuItem value="male">Male</MenuItem>
-                  <MenuItem value="female">Female</MenuItem>
-                  <MenuItem value="other">Other</MenuItem>
-                  <MenuItem value="unknown">Unknown</MenuItem>
+                  <MenuItem value="spanish">Spanish</MenuItem>
+                  <MenuItem value="polish">Polish</MenuItem>
+                  <MenuItem value="chinese">Chinese</MenuItem>
+                  <MenuItem value="tagalog">Tagalog</MenuItem>
+                  <MenuItem value="arabic">Arabic</MenuItem>
+                  <MenuItem value="urdu">Urdu</MenuItem>
+                  <MenuItem value="gujarati">Gujarati</MenuItem>
+                  <MenuItem value="russian">Russian</MenuItem>
+                  <MenuItem value="hindi">Hindi</MenuItem>
+                  <MenuItem value="korean">Korean</MenuItem>
+                  <MenuItem value="english">English</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -140,6 +149,25 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   <MenuItem value="unknown">Unknown</MenuItem>
                 </Select>
               </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+            <Tooltip title="Also called legal gender or gender marker" placement="top">
+              <FormControl fullWidth>
+                <InputLabel id="gender-label">Administrative Gender</InputLabel>
+                <Select
+                  labelId="administrative_gender-label"
+                  label="Administrative_gender"
+                  name="administrativeGender"
+                  value={formData.administrativeGender}
+                  onChange={handleChange}
+                >
+                  <MenuItem value="male">Male</MenuItem>
+                  <MenuItem value="female">Female</MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
+                  <MenuItem value="unknown">Unknown</MenuItem>
+                </Select>
+              </FormControl>
+            </Tooltip>
             </Grid>
             <Grid item xs={6}>
               <FormControl fullWidth>
@@ -183,25 +211,27 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
             </Grid>
             <Grid item xs={6}>
               <FormControl fullWidth>
-                <InputLabel id="language-label">Language</InputLabel>
+                <InputLabel id="sexual_orientation">Sexual Orientation</InputLabel>
                 <Select
-                  labelId="language-label"
-                  label="Language"
-                  name="language"
-                  value={formData.language}
+                  labelId="sexual_orientation-label"
+                  label="sexual_orientation"
+                  name="sexualOrientation"
+                  value={formData.sexualOrientation}
                   onChange={handleChange}
                 >
-                  <MenuItem value="spanish">Spanish</MenuItem>
-                  <MenuItem value="polish">Polish</MenuItem>
-                  <MenuItem value="chinese">Chinese</MenuItem>
-                  <MenuItem value="tagalog">Tagalog</MenuItem>
-                  <MenuItem value="arabic">Arabic</MenuItem>
-                  <MenuItem value="urdu">Urdu</MenuItem>
-                  <MenuItem value="gujarati">Gujarati</MenuItem>
-                  <MenuItem value="russian">Russian</MenuItem>
-                  <MenuItem value="hindi">Hindi</MenuItem>
-                  <MenuItem value="korean">Korean</MenuItem>
-                  <MenuItem value="english">English</MenuItem>
+                  <MenuItem value="Asexual">Asexual</MenuItem>
+                  <MenuItem value="Bisexual">Bisexual</MenuItem>
+                  <MenuItem value="Gay">Gay</MenuItem>
+                  <MenuItem value="Lesbian">Lesbian</MenuItem>
+                  <MenuItem value="Queer">Queer</MenuItem>
+                  <MenuItem value="Questioning">Questioning</MenuItem>
+                  <MenuItem value="Straight">Straight</MenuItem>
+                  <MenuItem value="Something Else">Something Else</MenuItem>
+                  <MenuItem value="Multiple Sexual Orientations">Multiple Sexual Orientations</MenuItem>
+                  <MenuItem value="Decline to Answer">Decline to Answer</MenuItem>
+                  <MenuItem value="No Information">No Information</MenuItem>
+                  <MenuItem value="unknown">Unknown</MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
