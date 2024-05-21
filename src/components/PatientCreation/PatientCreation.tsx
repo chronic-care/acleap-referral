@@ -1,24 +1,52 @@
+// PatientCreation.tsx
 import React, { useState } from 'react';
 import {
   TextField, Button, Select, MenuItem, InputLabel, FormControl, Grid, Box,
   Dialog, DialogTitle, DialogContent, DialogActions, Typography,
   Divider,
-  Tooltip
+  Tooltip,
+  Snackbar,
+  Alert
 } from '@mui/material';
+import createPatient from '../../services/createPatient'; // import the createPatient function
 
 type PatientCreationDialogProps = {
   open: boolean,
   onClose: () => void
 }
 
+type FormData = {
+  firstName: string,
+  lastName: string,
+  dateOfBirth: string,
+  administrativeGender: string,
+  race: string,
+  sex_at_birth: string,
+  ethnicity: string,
+  genderIdentity: string,
+  sexualOrientation: string,
+  language: string,
+  phoneNumber: string,
+  email: string,
+  address1: string,
+  address2: string,
+  city: string,
+  state: string,
+  zipCode: string
+};
+
+type FormErrors = {
+  [K in keyof FormData]?: string
+};
+
 const PatientCreation = (props: PatientCreationDialogProps) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     dateOfBirth: '',
     administrativeGender: '',
     race: '',
-    sex_at_birth:'',
+    sex_at_birth: '',
     ethnicity: '',
     genderIdentity: '',
     sexualOrientation: '',
@@ -32,17 +60,110 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
     zipCode: ''
   });
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string, value: unknown } }) => {
-    const name = event.target.name as keyof typeof formData;
-    const value = event.target.value;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const validateField = (name: keyof FormData, value: string): string => {
+    switch (name) {
+      case 'firstName':
+      case 'lastName':
+      case 'address1':
+      case 'city':
+      case 'state':
+      case 'zipCode':
+        if (!value) {
+          return 'enter the valid details into the field';
+        }
+        break;
+      case 'dateOfBirth':
+        if (!value || new Date(value) > new Date()) {
+          return 'enter the valid details into the field';
+        }
+        break;
+      case 'email':
+        if (!value.includes('@')) {
+          return 'enter the valid details into the field';
+        }
+        break;
+      case 'phoneNumber':
+        if (!value || !/^\+?[1-9]\d{1,14}$/.test(value)) {
+          return 'enter the valid details into the field';
+        }
+        break;
+      default:
+        if (!value) {
+          return 'enter the valid details into the field';
+        }
+    }
+    return '';
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string, value: unknown } }) => {
+    const name = event.target.name as keyof FormData;
+    const value = event.target.value as string;
+
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Form Data:", formData);
-    // Here you would typically send the data to your backend or another handler
-    props.onClose(); // Close the dialog upon submission
+    const errors: FormErrors = {};
+    Object.keys(formData).forEach(key => {
+      const error = validateField(key as keyof FormData, formData[key as keyof FormData]);
+      if (error) {
+        errors[key as keyof FormData] = error;
+      }
+    });
+    setFormErrors(errors);
+    if (Object.keys(errors).length === 0) {
+      const response = await createPatient(
+        formData.firstName,
+        formData.lastName,
+        formData.dateOfBirth,
+        formData.administrativeGender,
+        formData.race,
+        formData.sex_at_birth,
+        formData.ethnicity,
+        formData.genderIdentity,
+        formData.sexualOrientation,
+        formData.language,
+        formData.phoneNumber,
+        formData.email,
+        formData.address1,
+        formData.address2,
+        formData.city,
+        formData.state,
+        formData.zipCode
+      );
+      if (response) {
+        setSuccessMessage('Patient created successfully');
+        setFormData({
+          firstName: '',
+          lastName: '',
+          dateOfBirth: '',
+          administrativeGender: '',
+          race: '',
+          sex_at_birth: '',
+          ethnicity: '',
+          genderIdentity: '',
+          sexualOrientation: '',
+          language: '',
+          phoneNumber: '',
+          email: '',
+          address1: '',
+          address2: '',
+          city: '',
+          state: '',
+          zipCode: ''
+        });
+      }
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSuccessMessage(null);
+    props.onClose();
   };
 
   return (
@@ -61,6 +182,8 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
+                error={!!formErrors.firstName}
+                helperText={formErrors.firstName}
               />
             </Grid>
             <Grid item xs={6}>
@@ -72,6 +195,8 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
+                error={!!formErrors.lastName}
+                helperText={formErrors.lastName}
               />
             </Grid>
           </Grid>
@@ -87,6 +212,8 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                 value={formData.dateOfBirth}
                 InputLabelProps={{ shrink: true }}
                 onChange={handleChange}
+                error={!!formErrors.dateOfBirth}
+                helperText={formErrors.dateOfBirth}
               />
             </Grid>
             <Grid item xs={6}>
@@ -99,17 +226,17 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   value={formData.language}
                   onChange={handleChange}
                 >
-                  <MenuItem value="spanish">Spanish</MenuItem>
-                  <MenuItem value="polish">Polish</MenuItem>
-                  <MenuItem value="chinese">Chinese</MenuItem>
-                  <MenuItem value="tagalog">Tagalog</MenuItem>
-                  <MenuItem value="arabic">Arabic</MenuItem>
-                  <MenuItem value="urdu">Urdu</MenuItem>
-                  <MenuItem value="gujarati">Gujarati</MenuItem>
-                  <MenuItem value="russian">Russian</MenuItem>
-                  <MenuItem value="hindi">Hindi</MenuItem>
-                  <MenuItem value="korean">Korean</MenuItem>
-                  <MenuItem value="english">English</MenuItem>
+                  <MenuItem value="Arabic">Arabic</MenuItem>
+                  <MenuItem value="Chinese">Chinese</MenuItem>
+                  <MenuItem value="English">English</MenuItem>
+                  <MenuItem value="Gujarati">Gujarati</MenuItem>
+                  <MenuItem value="Hindi">Hindi</MenuItem>
+                  <MenuItem value="Korean">Korean</MenuItem>
+                  <MenuItem value="Polish">Polish</MenuItem>
+                  <MenuItem value="Russian">Russian</MenuItem>
+                  <MenuItem value="Spanish">Spanish</MenuItem>
+                  <MenuItem value="Tagalog">Tagalog</MenuItem>
+                  <MenuItem value="Urdu">Urdu</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -123,13 +250,14 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   value={formData.race}
                   onChange={handleChange}
                 >
-                  <MenuItem value="american_indian_or_alaska_native">American Indian or Alaska Native</MenuItem>
-                  <MenuItem value="asian">Asian</MenuItem>
-                  <MenuItem value="black_or_african_american">Black or African American</MenuItem>
-                  <MenuItem value="native_hawaiian_or_other_pacific_islander">Native Hawaiian or Other Pacific Islander</MenuItem>
-                  <MenuItem value="white">White</MenuItem>
-                  <MenuItem value="asked_but_unknown">Asked but unknown</MenuItem>
-                  <MenuItem value="unknown">Unknown</MenuItem>
+                  <MenuItem value="American Indian or Alaska Native">American Indian or Alaska Native</MenuItem>
+                  <MenuItem value="Asian">Asian</MenuItem>
+                  <MenuItem value="Asked but unknown">Asked but unknown</MenuItem>
+                  <MenuItem value="Black or African American">Black or African American</MenuItem>
+                  <MenuItem value="Native Hawaiian or Other Pacific Islander">Native Hawaiian or Other Pacific Islander</MenuItem>
+                  <MenuItem value="Other Race">Other Race</MenuItem>
+                  <MenuItem value="Unknown">Unknown</MenuItem>
+                  <MenuItem value="White">White</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -143,10 +271,10 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   value={formData.ethnicity}
                   onChange={handleChange}
                 >
-                  <MenuItem value="hispanic">Hispanic or Latino</MenuItem>
-                  <MenuItem value="non-hispanic">Not Hispanic or Latino</MenuItem>
-                  <MenuItem value="asked_but_unknown">Asked but unknown</MenuItem>
-                  <MenuItem value="unknown">Unknown</MenuItem>
+                  <MenuItem value="Asked but unknown">Asked but unknown</MenuItem>
+                  <MenuItem value="Hispanic or Latino">Hispanic or Latino</MenuItem>
+                  <MenuItem value="Not Hispanic or Latino">Not Hispanic or Latino</MenuItem>
+                  <MenuItem value="Unknown">Unknown</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -161,10 +289,10 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   value={formData.administrativeGender}
                   onChange={handleChange}
                 >
-                  <MenuItem value="male">Male</MenuItem>
-                  <MenuItem value="female">Female</MenuItem>
-                  <MenuItem value="other">Other</MenuItem>
-                  <MenuItem value="unknown">Unknown</MenuItem>
+                  <MenuItem value="Female">Female</MenuItem>
+                  <MenuItem value="Male">Male</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
+                  <MenuItem value="Unknown">Unknown</MenuItem>
                 </Select>
               </FormControl>
             </Tooltip>
@@ -179,11 +307,11 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   value={formData.sex_at_birth}
                   onChange={handleChange}
                 >
-                  <MenuItem value="male">Male</MenuItem>
-                  <MenuItem value="female">Female</MenuItem>
-                  <MenuItem value="other">Other</MenuItem>
-                  <MenuItem value="asked_but_unknown">Asked but unknown</MenuItem>
-                  <MenuItem value="unknown">Unknown</MenuItem>
+                  <MenuItem value="Asked but unknown">Asked but unknown</MenuItem>
+                  <MenuItem value="Female">Female</MenuItem>
+                  <MenuItem value="Male">Male</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
+                  <MenuItem value="Unknown">Unknown</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -197,15 +325,15 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   value={formData.genderIdentity}
                   onChange={handleChange}
                 >
-                  <MenuItem value="identifies_as_nonbinary_gender">Identifies as nonbinary gender</MenuItem>
-                  <MenuItem value="male-to-female_transsexual">Male-to-female transsexual</MenuItem>
-                  <MenuItem value="female-to-male_transsexual">Female-to-male transsexual</MenuItem>
-                  <MenuItem value="identifies_as_non-conforming_gender">Identifies as non-conforming gender</MenuItem>
-                  <MenuItem value="identifies_as_female_gender">Identifies as female gender</MenuItem>
-                  <MenuItem value="identifies_as_male_gender">Identifies as male gender</MenuItem>
-                  <MenuItem value="other">Other</MenuItem>
-                  <MenuItem value="unknown">Unknown</MenuItem>
-                  <MenuItem value="asked_but_unknown">Asked but unknown</MenuItem>
+                  <MenuItem value="Asked but unknown">Asked but unknown</MenuItem>
+                  <MenuItem value="Female-to-male transsexual">Female-to-male transsexual</MenuItem>
+                  <MenuItem value="Identifies as female gender">Identifies as female gender</MenuItem>
+                  <MenuItem value="Identifies as male gender">Identifies as male gender</MenuItem>
+                  <MenuItem value="Identifies as non-conforming gender">Identifies as non-conforming gender</MenuItem>
+                  <MenuItem value="Identifies as nonbinary gender">Identifies as nonbinary gender</MenuItem>
+                  <MenuItem value="Male-to-female transsexual">Male-to-female transsexual</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
+                  <MenuItem value="Unknown">Unknown</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -221,15 +349,15 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                 >
                   <MenuItem value="Asexual">Asexual</MenuItem>
                   <MenuItem value="Bisexual">Bisexual</MenuItem>
+                  <MenuItem value="Decline to Answer">Decline to Answer</MenuItem>
                   <MenuItem value="Gay">Gay</MenuItem>
                   <MenuItem value="Lesbian">Lesbian</MenuItem>
+                  <MenuItem value="Multiple Sexual Orientations">Multiple Sexual Orientations</MenuItem>
+                  <MenuItem value="No Information">No Information</MenuItem>
                   <MenuItem value="Queer">Queer</MenuItem>
                   <MenuItem value="Questioning">Questioning</MenuItem>
                   <MenuItem value="Straight">Straight</MenuItem>
                   <MenuItem value="Something Else">Something Else</MenuItem>
-                  <MenuItem value="Multiple Sexual Orientations">Multiple Sexual Orientations</MenuItem>
-                  <MenuItem value="Decline to Answer">Decline to Answer</MenuItem>
-                  <MenuItem value="No Information">No Information</MenuItem>
                   <MenuItem value="unknown">Unknown</MenuItem>
                   <MenuItem value="other">Other</MenuItem>
                 </Select>
@@ -247,6 +375,8 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
+                error={!!formErrors.phoneNumber}
+                helperText={formErrors.phoneNumber}
               />
             </Grid>
             <Grid item xs={6}>
@@ -258,6 +388,8 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                error={!!formErrors.email}
+                helperText={formErrors.email}
               />
             </Grid>
             <Grid item xs={12}>
@@ -269,6 +401,8 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                 name="address1"
                 value={formData.address1}
                 onChange={handleChange}
+                error={!!formErrors.address1}
+                helperText={formErrors.address1}
               />
             </Grid>
             <Grid item xs={12}>
@@ -290,6 +424,8 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
+                error={!!formErrors.city}
+                helperText={formErrors.city}
               />
             </Grid>
             <Grid item xs={3}>
@@ -301,6 +437,8 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                 name="state"
                 value={formData.state}
                 onChange={handleChange}
+                error={!!formErrors.state}
+                helperText={formErrors.state}
               />
             </Grid>
             <Grid item xs={3}>
@@ -312,6 +450,8 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                 name="zipCode"
                 value={formData.zipCode}
                 onChange={handleChange}
+                error={!!formErrors.zipCode}
+                helperText={formErrors.zipCode}
               />
             </Grid>
           </Grid>
@@ -327,6 +467,11 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
           </DialogActions>
         </Box>
       </DialogContent>
+      <Snackbar open={!!successMessage} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 };
