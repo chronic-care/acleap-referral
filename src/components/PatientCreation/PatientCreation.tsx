@@ -70,8 +70,12 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
       case 'address1':
       case 'city':
       case 'state':
-      case 'zipCode':
         if (!value) {
+          return 'enter the valid details into the field';
+        }
+        break;
+      case 'zipCode':
+        if (!value || value.length !== 5) {
           return 'enter the valid details into the field';
         }
         break;
@@ -86,7 +90,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
         }
         break;
       case 'phoneNumber':
-        if (!value || !/^\+?[1-9]\d{1,14}$/.test(value)) {
+        if (!value || value.length !== 10 || !/^\d{10}$/.test(value)) {
           return 'enter the valid details into the field';
         }
         break;
@@ -117,25 +121,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
     });
     setFormErrors(errors);
     if (Object.keys(errors).length === 0) {
-      const response = await createPatient(
-        formData.firstName,
-        formData.lastName,
-        formData.dateOfBirth,
-        formData.administrativeGender,
-        formData.race,
-        formData.sex_at_birth,
-        formData.ethnicity,
-        formData.genderIdentity,
-        formData.sexualOrientation,
-        formData.language,
-        formData.phoneNumber,
-        formData.email,
-        formData.address1,
-        formData.address2,
-        formData.city,
-        formData.state,
-        formData.zipCode
-      );
+      const response = await createPatient(formData);
       if (response) {
         setSuccessMessage('Patient created successfully');
         setFormData({
@@ -157,6 +143,10 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
           state: '',
           zipCode: ''
         });
+        // Close the dialog after 3 seconds
+        setTimeout(() => {
+          props.onClose();
+        }, 3000);
       }
     }
   };
@@ -467,7 +457,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
           </DialogActions>
         </Box>
       </DialogContent>
-      <Snackbar open={!!successMessage} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+      <Snackbar open={!!successMessage} autoHideDuration={3000} onClose={handleCloseSnackbar}>
         <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
           {successMessage}
         </Alert>

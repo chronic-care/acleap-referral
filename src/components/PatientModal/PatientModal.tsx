@@ -1,6 +1,6 @@
 import React from "react";
 
-const CreatePatient = () => {
+const PatientModal = () => {
 
     // Need to implement the footer part and sorting part
     return (
@@ -10,4 +10,4 @@ const CreatePatient = () => {
     );
 }
 
-export default CreatePatient;
+export default PatientModal;
