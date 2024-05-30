@@ -8,7 +8,7 @@ import {
   Snackbar,
   Alert
 } from '@mui/material';
-import createPatient from '../../services/createPatient'; // import the createPatient function
+import createPatient from '../../services/createPatient';
 
 type PatientCreationDialogProps = {
   open: boolean,
