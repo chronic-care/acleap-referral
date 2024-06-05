@@ -4,7 +4,7 @@ const URL = process.env.REACT_APP_BACKEND_API_URL;
 
 const getOrganizations = async () => {
     try {
-        const apiUrl = `${URL}/Organizations`;
+        const apiUrl = `${URL}/Organization`;
 
         // Send GET request using axios.get
         const response = await axios.get(apiUrl);

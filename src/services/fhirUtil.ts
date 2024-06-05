@@ -1,5 +1,5 @@
-import { Patient, ServiceRequest, Task, PractitionerRole } from "fhir/r4";
-import { ACLPatient, ACLServiceRequest, ACLTasks, ACLPractitionerRole} from "../types";
+import { Patient, ServiceRequest, Task, PractitionerRole, Organization } from "fhir/r4";
+import { ACLPatient, ACLServiceRequest, ACLTasks, ACLPractitionerRole, ACLOrganization} from "../types";
 import moment from 'moment';
 
 export const transformPatient = (patient: any): ACLPatient => {
@@ -140,6 +140,19 @@ export const transformPractitionerRole = (practitionerRole: ACLPractitionerRole 
       practitionerRoleId,
       practitionerid,
       practitionerOrganizationName
+    }
+  });
+};
+
+export const transformOrganizations = (Organizations: ACLOrganization ) => {
+
+  return Organizations.map((Organization: Organization) => {
+    const organizationName = Organization?.name;
+    const organizationId = Organization?.id;
+
+    return{
+      organizationName,
+      organizationId
     }
   });
 };

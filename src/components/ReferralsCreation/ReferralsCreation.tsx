@@ -3,9 +3,10 @@ import {
     Box, Typography, Grid, Paper, TextField, MenuItem, Button, Divider, Dialog, DialogTitle, DialogContent, IconButton
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import { ACLPatient, ACLPractitionerRole } from "../../types";
+import { ACLPatient, ACLPractitionerRole, ACLOrganization } from "../../types";
 import getPractitioner from "../../services/getPractitioner";
-import { transformPractitionerRole } from "../../services/fhirUtil";
+import { transformPractitionerRole, transformOrganizations } from "../../services/fhirUtil";
+import getOrganizations from "../../services/getOrganizations";
 
 type ReferralsCreationProps = {
     open: boolean;
@@ -14,13 +15,26 @@ type ReferralsCreationProps = {
     patient: ACLPatient;
 };
 
+type CreateServiceRequestData = {
+    patientId: string,
+    practitionerId: string,
+    selectedPractitionerName :string,
+    organizationId: string,
+    performerOrganization: string,
+    referralNote: string,
+    serviceRequested: string
+  };
+
 const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, onReferralCreated, patient }) => {
     const [serviceRequested, setServiceRequested] = useState("");
     const [referralNote, setReferralNote] = useState("");
     const [performerOrganization, setPerformerOrganization] = useState("");
+    const [selectedOrganizationId, setSelectedOrganizationId] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [practitionerNames, setPractitionerNames] = useState<ACLPractitionerRole[]>([]);
+    const [organizationNames, setOrganizationNames] = useState<ACLOrganization[]>([]);
     const [selectedPractitionerName, setSelectedPractitionerName] = useState("");
+    const [selectedPractitionerId, setSelectedPractitionerId] = useState("");
 
     useEffect(() => {
         getResourcesData();
@@ -32,12 +46,13 @@ const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, on
         const practitionerRole = practitionerData.slice(1);
         const transformedPractitionerRole: ACLPractitionerRole[] = transformPractitionerRole(practitionerRole);
         setPractitionerNames(transformedPractitionerRole);
-    };
 
-    const performerOrganizations = [
-        { value: 'org1', label: 'Organization 1' },
-        { value: 'org2', label: 'Organization 2' },
-    ];
+        const organizationResponse = await getOrganizations();
+        const organizationResponseData = organizationResponse.map((o: { resource: any; }) => o.resource);
+        const organizations = organizationResponseData.slice(1);
+        const transformedOrganizations: ACLOrganization[] = transformOrganizations(organizations);
+        setOrganizationNames(transformedOrganizations);
+    };
 
     const validate = () => {
         const newErrors: { [key: string]: string } = {};
@@ -51,16 +66,37 @@ const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, on
     const handleSave = () => {
         if (!validate()) return;
 
-        const formData = {
-            serviceRequested,
-            referralNote,
+        const formData : CreateServiceRequestData = {
+            patientId: patient.patientFhirId ? patient.patientFhirId : "",
+            practitionerId: selectedPractitionerId,
+            selectedPractitionerName,
+            organizationId: selectedOrganizationId,
             performerOrganization,
-            selectedPractitionerName
+            referralNote,
+            serviceRequested
         };
 
         console.log("Form Data:", formData);
         onReferralCreated();
         onClose();
+    };
+
+    const handlePractitionerChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        const selectedName = event.target.value as string;
+        const selectedPractitioner = practitionerNames.find(practitioner => practitioner.practitionerName === selectedName);
+        if (selectedPractitioner) {
+            setSelectedPractitionerName(selectedName);
+            setSelectedPractitionerId(selectedPractitioner.practitionerRoleId ? selectedPractitioner.practitionerRoleId : "No Id");
+        }
+    };
+
+    const handleOrganizationChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        const selectedName = event.target.value as string;
+        const selectedOrganization = organizationNames.find(organization => organization.organizationName === selectedName);
+        if (selectedOrganization) {
+            setPerformerOrganization(selectedName);
+            setSelectedOrganizationId(selectedOrganization.organizationId ? selectedOrganization.organizationId : "No Id");
+        }
     };
 
     return (
@@ -145,14 +181,12 @@ const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, on
                                 fullWidth
                                 variant="outlined"
                                 value={performerOrganization}
-                                onChange={(e) => setPerformerOrganization(e.target.value)}
+                                onChange={handleOrganizationChange}
                                 error={!!errors.performerOrganization}
                                 helperText={errors.performerOrganization}
                             >
-                                {performerOrganizations.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
+                                {organizationNames.map((organization, index) => (
+                                    <MenuItem key={index} value={organization.organizationName}>{organization.organizationName}</MenuItem>
                                 ))}
                             </TextField>
                         </Grid>
@@ -181,7 +215,7 @@ const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, on
                                 fullWidth
                                 variant="outlined"
                                 value={selectedPractitionerName}
-                                onChange={(e) => setSelectedPractitionerName(e.target.value)}
+                                onChange={handlePractitionerChange}
                                 error={!!errors.practitionerName}
                                 helperText={errors.practitionerName}
                             >

@@ -53,3 +53,9 @@ export type ACLPractitionerRole = {
     practitionerid?: string,
     practitionerOrganizationName?: string,
 }
+
+export type ACLOrganization = {
+    [x:string]: any,
+    organizationName?: string,
+    organizationId?: string,
+}
