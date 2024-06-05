@@ -35,6 +35,11 @@ export const transformPatient = (patient: any): ACLPatient => {
     const name = patient.name?.[0]?.text;
     const firstName = patient.name?.[0]?.given?.[0];
     const lastName = patient.name?.[0]?.family;
+    const language = patient.communication ? patient.communication[0].language.text : undefined;
+    const address1 = patient.address?.[0]?.line?.[0]
+    const address2 = patient.address?.[0]?.line?.[1] ? patient.address?.[0]?.line?.[1] : '';
+    const city = patient.address?.[0]?.city
+    const state = patient.address?.[0]?.state
 
     return {
         id,
@@ -48,11 +53,12 @@ export const transformPatient = (patient: any): ACLPatient => {
         ethnicity,
         phone: patient.telecom?.find(telecom => telecom.system === "phone")?.value,
         email: patient.telecom?.find(telecom => telecom.system === "email")?.value,
-        address: patient.address?.[0]?.line?.[0],
+        address: `${address1} ${address2} ${city} ${state}`,
         race,
         sexAtBirth,
         genderIdentity,
         sexualOrientation,
+        language
     }
   });
 };

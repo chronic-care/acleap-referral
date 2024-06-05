@@ -18,6 +18,7 @@ export type ACLPatient = {
     sexAtBirth?: string;
     genderIdentity?: string;
     sexualOrientation?: string;
+    language?: string;
 }
 
 export type ACLServiceRequest = {

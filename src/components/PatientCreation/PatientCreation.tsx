@@ -71,32 +71,32 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
       case 'city':
       case 'state':
         if (!value) {
-          return 'enter the valid details into the field';
+          return 'Please enter valid details into the field';
         }
         break;
       case 'zipCode':
         if (!value || value.length !== 5) {
-          return 'enter the valid details into the field';
+          return 'Please enter a valid 5-digit zip code';
         }
         break;
       case 'dateOfBirth':
         if (!value || new Date(value) > new Date()) {
-          return 'enter the valid details into the field';
+          return 'Please enter a valid date of birth';
         }
         break;
       case 'email':
         if (!value.includes('@')) {
-          return 'enter the valid details into the field';
+          return 'Please enter a valid email address';
         }
         break;
       case 'phoneNumber':
         if (!value || value.length !== 10 || !/^\d{10}$/.test(value)) {
-          return 'enter the valid details into the field';
+          return 'Please enter a valid 10-digit phone number';
         }
         break;
       default:
-        if (!value) {
-          return 'enter the valid details into the field';
+        if (!value && name !== 'address2') {
+          return 'Please enter valid details into the field';
         }
     }
     return '';
@@ -121,33 +121,40 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
     });
     setFormErrors(errors);
     if (Object.keys(errors).length === 0) {
-      const response = await createPatient(formData);
-      if (response) {
-        setSuccessMessage('Patient created successfully');
-        setFormData({
-          firstName: '',
-          lastName: '',
-          dateOfBirth: '',
-          administrativeGender: '',
-          race: '',
-          sex_at_birth: '',
-          ethnicity: '',
-          genderIdentity: '',
-          sexualOrientation: '',
-          language: '',
-          phoneNumber: '',
-          email: '',
-          address1: '',
-          address2: '',
-          city: '',
-          state: '',
-          zipCode: ''
-        });
-        // Close the dialog after 3 seconds
-        setTimeout(() => {
-          props.onClose();
-        }, 3000);
+      try {
+        const response = await createPatient(formData);
+        if (response) {
+          setSuccessMessage('Patient created successfully');
+          setFormData({
+            firstName: '',
+            lastName: '',
+            dateOfBirth: '',
+            administrativeGender: '',
+            race: '',
+            sex_at_birth: '',
+            ethnicity: '',
+            genderIdentity: '',
+            sexualOrientation: '',
+            language: '',
+            phoneNumber: '',
+            email: '',
+            address1: '',
+            address2: '',
+            city: '',
+            state: '',
+            zipCode: ''
+          });
+          setTimeout(() => {
+            props.onClose();
+          }, 3000);
+        } else {
+          console.error('Failed to create patient: No response from server');
+        }
+      } catch (error) {
+        console.error('Failed to create patient:', error);
       }
+    } else {
+      console.log('Validation errors:', errors);
     }
   };
 
@@ -208,7 +215,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
             </Grid>
             <Grid item xs={6}>
               <FormControl fullWidth>
-                <InputLabel id="language-label">Language</InputLabel>
+                <InputLabel id="language-label" required>Language</InputLabel>
                 <Select
                   labelId="language-label"
                   label="Language"
@@ -232,7 +239,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
             </Grid>
             <Grid item xs={6}>
               <FormControl fullWidth>
-                <InputLabel id="race-label">Race</InputLabel>
+                <InputLabel id="race-label" required>Race</InputLabel>
                 <Select
                   labelId="race-label"
                   label="Race"
@@ -253,7 +260,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
             </Grid>
             <Grid item xs={6}>
               <FormControl fullWidth>
-                <InputLabel id="ethnicity-label">Ethnicity</InputLabel>
+                <InputLabel id="ethnicity-label" required>Ethnicity</InputLabel>
                 <Select
                   labelId="ethnicity-label"
                   label="Ethnicity"
@@ -271,7 +278,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
             <Grid item xs={6}>
             <Tooltip title="Also called legal gender or gender marker" placement="top">
               <FormControl fullWidth>
-                <InputLabel id="gender-label">Administrative Gender</InputLabel>
+                <InputLabel id="gender-label" required>Administrative Gender</InputLabel>
                 <Select
                   labelId="administrative_gender-label"
                   label="Administrative_gender"
@@ -445,8 +452,8 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
               />
             </Grid>
           </Grid>
-          <br></br>
-          <Divider></Divider>
+          <br />
+          <Divider />
           <DialogActions>
             <Button onClick={props.onClose} color="error">
               <b>Cancel</b>
