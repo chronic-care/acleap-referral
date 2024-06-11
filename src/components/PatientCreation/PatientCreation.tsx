@@ -19,7 +19,7 @@ type FormData = {
   firstName: string,
   lastName: string,
   dateOfBirth: string,
-  administrativeGender: string,
+  gender: string,
   race: string,
   sex_at_birth: string,
   ethnicity: string,
@@ -32,7 +32,7 @@ type FormData = {
   address2: string,
   city: string,
   state: string,
-  zipCode: string
+  zipcode: string
 };
 
 type FormErrors = {
@@ -44,7 +44,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
     firstName: '',
     lastName: '',
     dateOfBirth: '',
-    administrativeGender: '',
+    gender: '',
     race: '',
     sex_at_birth: '',
     ethnicity: '',
@@ -57,7 +57,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
     address2: '',
     city: '',
     state: '',
-    zipCode: ''
+    zipcode: ''
   });
 
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -74,7 +74,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
           return 'Please enter valid details into the field';
         }
         break;
-      case 'zipCode':
+      case 'zipcode':
         if (!value || value.length !== 5) {
           return 'Please enter a valid 5-digit zip code';
         }
@@ -129,7 +129,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
             firstName: '',
             lastName: '',
             dateOfBirth: '',
-            administrativeGender: '',
+            gender: '',
             race: '',
             sex_at_birth: '',
             ethnicity: '',
@@ -142,7 +142,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
             address2: '',
             city: '',
             state: '',
-            zipCode: ''
+            zipcode: ''
           });
           setTimeout(() => {
             props.onClose();
@@ -280,10 +280,10 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
               <FormControl fullWidth>
                 <InputLabel id="gender-label" required>Administrative Gender</InputLabel>
                 <Select
-                  labelId="administrative_gender-label"
-                  label="Administrative_gender"
-                  name="administrativeGender"
-                  value={formData.administrativeGender}
+                  labelId="gender-label"
+                  label="gender"
+                  name="gender"
+                  value={formData.gender}
                   onChange={handleChange}
                 >
                   <MenuItem value="Female">Female</MenuItem>
@@ -444,11 +444,11 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                 fullWidth
                 label="Zip Code"
                 variant="outlined"
-                name="zipCode"
-                value={formData.zipCode}
+                name="zipcode"
+                value={formData.zipcode}
                 onChange={handleChange}
-                error={!!formErrors.zipCode}
-                helperText={formErrors.zipCode}
+                error={!!formErrors.zipcode}
+                helperText={formErrors.zipcode}
               />
             </Grid>
           </Grid>

@@ -40,6 +40,7 @@ export const transformPatient = (patient: any): ACLPatient => {
     const address2 = patient.address?.[0]?.line?.[1] ? patient.address?.[0]?.line?.[1] : '';
     const city = patient.address?.[0]?.city
     const state = patient.address?.[0]?.state
+    const zipcode = patient.address?.[0]?.postalCode
 
     return {
         id,
@@ -53,7 +54,7 @@ export const transformPatient = (patient: any): ACLPatient => {
         ethnicity,
         phone: patient.telecom?.find(telecom => telecom.system === "phone")?.value,
         email: patient.telecom?.find(telecom => telecom.system === "email")?.value,
-        address: `${address1} ${address2} ${city} ${state}`,
+        address: `${address1} ${address2} ${city} ${state} ${zipcode}`,
         race,
         sexAtBirth,
         genderIdentity,

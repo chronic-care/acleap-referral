@@ -7,6 +7,7 @@ import { ACLPatient, ACLPractitionerRole, ACLOrganization } from "../../types";
 import getPractitioner from "../../services/getPractitioner";
 import { transformPractitionerRole, transformOrganizations } from "../../services/fhirUtil";
 import getOrganizations from "../../services/getOrganizations";
+import createServiceRequest from "../../services/createServiceRequest";
 
 type ReferralsCreationProps = {
     open: boolean;
@@ -16,13 +17,13 @@ type ReferralsCreationProps = {
 };
 
 type CreateServiceRequestData = {
-    patientId: string,
+    patientID: string,
     practitionerId: string,
-    selectedPractitionerName :string,
+    practitionerName :string,
     organizationId: string,
-    performerOrganization: string,
-    referralNote: string,
-    serviceRequested: string
+    organizationName: string,
+    referralText: string,
+    serviceRequestText: string
   };
 
 const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, onReferralCreated, patient }) => {
@@ -63,20 +64,25 @@ const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, on
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!validate()) return;
 
         const formData : CreateServiceRequestData = {
-            patientId: patient.patientFhirId ? patient.patientFhirId : "",
+            patientID: patient.patientFhirId ? patient.patientFhirId : "",
             practitionerId: selectedPractitionerId,
-            selectedPractitionerName,
+            practitionerName: selectedPractitionerName,
             organizationId: selectedOrganizationId,
-            performerOrganization,
-            referralNote,
-            serviceRequested
+            organizationName: performerOrganization,
+            referralText: referralNote,
+            serviceRequestText: serviceRequested
         };
 
         console.log("Form Data:", formData);
+        const response = await createServiceRequest(formData);
+        if(response){
+            console.log("response",response);
+            alert("Service Request is created successfully");
+        }
         onReferralCreated();
         onClose();
     };
@@ -199,11 +205,11 @@ const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, on
                                 variant="outlined"
                                 multiline
                                 rows={4}
-                                inputProps={{ maxLength: 100 }}
+                                inputProps={{ maxLength: 5000 }}
                                 value={referralNote}
                                 onChange={(e) => setReferralNote(e.target.value)}
-                                error={referralNote.length > 100}
-                                helperText={`${referralNote.length}/100`}
+                                error={referralNote.length > 5000}
+                                helperText={`${referralNote.length}/5000`}
                             />
                         </Grid>
                         <Grid item xs={4}>

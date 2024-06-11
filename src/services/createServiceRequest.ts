@@ -3,19 +3,9 @@ import axios from 'axios';
 
 const URL = process.env.REACT_APP_BACKEND_API_URL;
 
-type CreateServiceRequestData = {
-  patientId: string,
-  practitionerId: string,
-  selectedPractitionerName :string,
-  organizationId: string,
-  performerOrganization: string,
-  referralNote: string,
-  serviceRequested: string
-};
-
-const createServiceRequest = async (ServiceRequestData: CreateServiceRequestData) => {
+const createServiceRequest = async (ServiceRequestData: any) => {
   try {
-    const apiUrl = `${URL}/createServiceRequest`;
+    const apiUrl = `${URL}/createServiceRequestandtask`;
     const response = await axios.post(apiUrl, ServiceRequestData);
 
     if (response.status === 201) {
