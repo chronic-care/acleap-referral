@@ -150,8 +150,18 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
         } else {
           console.error('Failed to create patient: No response from server');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to create patient:', error);
+        if (error.response) {
+          console.error('Error data:', error.response.data);
+          console.error('Error status:', error.response.status);
+          console.error('Error headers:', error.response.headers);
+          alert(`Server responded with status code ${error.response.status}: ${error.response.data}`);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('Error request:', error.request);
+          alert('No response received from the server.');
+        } 
       }
     } else {
       console.log('Validation errors:', errors);
@@ -278,7 +288,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
             <Grid item xs={6}>
             <Tooltip title="Also called legal gender or gender marker" placement="top">
               <FormControl fullWidth>
-                <InputLabel id="gender-label" required>Administrative Gender</InputLabel>
+                <InputLabel id="gender" required>Administrative Gender</InputLabel>
                 <Select
                   labelId="gender-label"
                   label="gender"
@@ -286,10 +296,10 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   value={formData.gender}
                   onChange={handleChange}
                 >
-                  <MenuItem value="Female">Female</MenuItem>
-                  <MenuItem value="Male">Male</MenuItem>
-                  <MenuItem value="Other">Other</MenuItem>
-                  <MenuItem value="Unknown">Unknown</MenuItem>
+                  <MenuItem value="female">Female</MenuItem>
+                  <MenuItem value="male">Male</MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
+                  <MenuItem value="unknown">Unknown</MenuItem>
                 </Select>
               </FormControl>
             </Tooltip>
