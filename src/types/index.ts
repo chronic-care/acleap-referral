@@ -29,7 +29,9 @@ export type ACLServiceRequest = {
     intialReferralNote?: string,
     serviceRequestId?: string,
     serviceRequestPatientId?: string,
-    serviceRequestFHIRId?: string
+    serviceRequestFHIRId?: string,
+    serviceRequestPerformer?: string,
+    serviceRequestRequester?: string
 }
 
 export type ACLTasks = {

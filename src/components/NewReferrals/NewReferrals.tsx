@@ -36,8 +36,9 @@ const columns: GridColDef[] = [
     { field: 'lastName', headerName: 'Last name', width: 120 },
     { field: 'firstName', headerName: 'First Name', width: 120 },
     { field: 'serviceRequested', headerName: 'Service Requested', width: 250 },
-    { field: 'referralSource', headerName: 'Referral Source', width: 180 },
+    { field: 'serviceRequestRequester', headerName: 'Referral source', width: 150 },
     { field: 'taskBusinessStatus',headerName: 'Task Status',renderCell:renderRating, width:140 },
+    { field: 'serviceRequestPerformer', headerName: 'Referral Recipient', width: 180 },
     { field: 'taskOwner', headerName: 'Task Owner', width: 140 }
   ];
 
@@ -94,7 +95,7 @@ const NewReferrals = () => {
                 typeof matchingPatient.firstName === 'string' && typeof matchingPatient.lastName === 'string' &&
                 typeof matchingTask.taskAuthoredDate === 'string' && typeof matchingTask.taskBusinessStatus === 'string') {
                     let matchedTaskOwner: string;
-                    if(matchingTask.taskOwner === "Dr. Onwers"){
+                    if(matchingTask.taskOwner === "Dr. Onwers" || matchingTask.taskOwner === "Dr. Owners"){
                         matchedTaskOwner = "UnAssigned"
                     }
                     else{

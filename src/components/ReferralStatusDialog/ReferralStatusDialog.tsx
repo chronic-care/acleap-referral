@@ -303,7 +303,7 @@ const ReferralStatusDialog = (props: ReferralStatusDialogProps) => {
                                                 <Typography variant="body1" my={1}><b>First name: </b>{patient?.firstName}</Typography>
                                                 <Typography variant="body1" my={1}><b>Last name: </b>{patient?.lastName}</Typography>
                                                 <Typography variant="body1" my={1}><b>Birth date: </b>{patient?.birthDate}</Typography>
-                                                <Typography variant="body1" my={1}><b>Gender: </b>{patient?.gender}</Typography>
+                                                <Typography variant="body1" my={1}><b>Administrative Gender: </b>{patient?.gender}</Typography>
                                                 <Typography variant="body1" my={1}><b>Ethnicity: </b>{patient?.ethnicity}</Typography>
                                                 <Typography variant="body1" my={1}><b>Phone: </b>{patient?.phone}</Typography>
                                                 <Typography variant="body1" my={1}><b>E-mail: </b>{patient?.email}</Typography>

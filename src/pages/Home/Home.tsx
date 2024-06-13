@@ -22,8 +22,8 @@ const Home = () => {
                     <Tab label="CREATE REFERRALS" />
                 </Tabs>
                 <TabPanel value={value} index={0}>
-                    <Card variant="outlined" sx={{ padding: '16px', marginBottom: '24px', width : 1150 }}>
-                        <Grid container spacing={2}>
+                    <Card variant="outlined" sx={{ padding: '16px', marginBottom: '24px', width : 1300 }}>
+                        <Grid container spacing={2} justifyContent="center">
                             <Grid item sm={12} md={12} overflow={'auto'}>
                                 <NewReferrals />
                             </Grid>
@@ -32,7 +32,7 @@ const Home = () => {
                 </TabPanel>
                 <TabPanel value={value} index={1}>
                     <Card variant="outlined" sx={{ padding: '16px', marginBottom: '24px' }}>
-                        <Grid container spacing={2}>
+                        <Grid container spacing={2} justifyContent="center">
                             <Grid item sm={12} md={12} overflow={'auto'}>
                                 <PatientSearch />
                             </Grid>

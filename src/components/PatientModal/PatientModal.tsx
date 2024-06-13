@@ -39,6 +39,7 @@ const PatientModal = ({ open, onClose, patient }: PatientModalProps) => {
         if (patient?.patientFhirId) {
             try {
                 const resources: any = await getServiceRequestTaskSearch(patient.patientFhirId);
+                console.log("resources", resources);
                 const transformedServiceRequests: ACLServiceRequest[] = transformServiceRequests(resources.serviceRequests.map((p: any) => p.resource));
                 const transformedTasks: ACLTasks[] = transformTasks(resources.tasks.map((p: any) => p.resource));
 
@@ -49,8 +50,8 @@ const PatientModal = ({ open, onClose, patient }: PatientModalProps) => {
                     if (matchingPatient && matchingTask &&
                         typeof matchingPatient.firstName === 'string' && typeof matchingPatient.lastName === 'string' &&
                         typeof matchingTask.taskAuthoredDate === 'string' && typeof matchingTask.taskBusinessStatus === 'string') {
-                        
-                        const matchedTaskOwner = matchingTask.taskOwner === "Dr. Owners" ? "UnAssigned" : matchingTask.taskOwner;
+
+                        const matchedTaskOwner = (matchingTask.taskOwner === "Dr. Onwers" || matchingTask.taskOwner === "Dr. Owners" ) ? "UnAssigned" : matchingTask.taskOwner;
 
                         return {
                             ...item,
@@ -172,6 +173,7 @@ const PatientModal = ({ open, onClose, patient }: PatientModalProps) => {
                                                             <TableCell><b>Service Requested</b></TableCell>
                                                             <TableCell><b>Referral Source</b></TableCell>
                                                             <TableCell><b>Task Status</b></TableCell>
+                                                            <TableCell><b>Referral Recipient</b></TableCell>
                                                             <TableCell><b>Task Owner</b></TableCell>
                                                         </TableRow>
                                                     </TableHead>
@@ -182,8 +184,9 @@ const PatientModal = ({ open, onClose, patient }: PatientModalProps) => {
                                                                 <TableCell>{service.lastName}</TableCell>
                                                                 <TableCell>{service.firstName}</TableCell>
                                                                 <TableCell>{service.serviceRequested}</TableCell>
-                                                                <TableCell>{service.referralSource}</TableCell>
+                                                                <TableCell>{service.serviceRequestRequester}</TableCell>
                                                                 <TableCell>{service.taskBusinessStatus}</TableCell>
+                                                                <TableCell>{service.serviceRequestPerformer}</TableCell>
                                                                 <TableCell>{service.taskOwner}</TableCell>
                                                             </TableRow>
                                                         ))}

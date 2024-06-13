@@ -75,6 +75,8 @@ export const transformServiceRequests = (serviceRequests: ACLServiceRequest) => 
       const serviceRequested = serviceRequest.code?.text;
       const serviceRequestPatientId = serviceRequest.subject.reference?.replace("Patient/","");
       const serviceRequestFHIRId = serviceRequest?.id;
+      const serviceRequestPerformer = serviceRequest?.performer?.[0]?.display;
+      const serviceRequestRequester = serviceRequest?.requester?.display;
 
       return {
         dateCreated,
@@ -83,7 +85,9 @@ export const transformServiceRequests = (serviceRequests: ACLServiceRequest) => 
         serviceRequested,
         id:index,
         serviceRequestPatientId,
-        serviceRequestFHIRId
+        serviceRequestFHIRId,
+        serviceRequestPerformer,
+        serviceRequestRequester
       };
     });
 };
