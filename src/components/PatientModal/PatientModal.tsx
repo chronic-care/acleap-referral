@@ -194,7 +194,7 @@ const PatientModal = ({ open, onClose, patient }: PatientModalProps) => {
                                                 </Table>
                                             ) : (
                                                 <Typography variant="body1" align="center" style={{ padding: '16px' }}>
-                                                    There are no Referrals Available for this Patient, Consider Creating One
+                                                    No referrals found
                                                 </Typography>
                                             )}
                                         </TableContainer>

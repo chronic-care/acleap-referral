@@ -166,9 +166,10 @@ const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, on
                     <Divider />
                     <Grid container spacing={2} mt={2}>
                         <Grid item xs={8}>
-                            <Typography><b>Service Requested:</b></Typography>
+                            <Typography><b>Service Requested:*</b></Typography>
                             <br />
                             <TextField
+                                required
                                 label="Service"
                                 fullWidth
                                 variant="outlined"
@@ -179,9 +180,10 @@ const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, on
                             />
                         </Grid>
                         <Grid item xs={4}>
-                            <Typography><b>Performer Organization</b></Typography>
+                            <Typography><b>Referral Recipient*</b></Typography>
                             <br />
                             <TextField
+                                required
                                 select
                                 label="Organization"
                                 fullWidth
@@ -213,9 +215,10 @@ const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, on
                             />
                         </Grid>
                         <Grid item xs={4}>
-                            <Typography><b>Referral Requester</b></Typography>
+                            <Typography><b>Referral Requester*</b></Typography>
                             <br />
                             <TextField
+                                required
                                 select
                                 label="Requester"
                                 fullWidth

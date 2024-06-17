@@ -96,7 +96,7 @@ const PatientSearch = () => {
         <>
             {newPatientCreationCardVisible && <PatientCreation open={true} onClose={handleClose} />}
             <Typography variant="h6" mb={2}>Patient Search</Typography>
-            <p>Search for Patient to start a referral</p>
+            <p>Search for a patient to start a new referral</p>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <TextField
@@ -134,7 +134,7 @@ const PatientSearch = () => {
                     <div style={{ height: 300, width: '100%' }}>
                         <br />
                         <DataGrid
-                            rows={services.length === 0 ? [{ id: 0, message: 'No patients found. Consider creating a new patient.' }] : services}
+                            rows={services.length === 0 ? [{ id: 0, message: 'No patients found' }] : services}
                             getRowId={(row) => row.id}
                             columns={services.length === 0 ? [
                                 { field: 'message', headerName: 'Message', width: 800, renderCell: (params) => <span>{params.value}</span> }

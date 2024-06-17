@@ -85,7 +85,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
         }
         break;
       case 'email':
-        if (!value.includes('@')) {
+        if (value && !value.includes('@')) {
           return 'Please enter a valid email address';
         }
         break;
@@ -158,7 +158,6 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
           console.error('Error headers:', error.response.headers);
           alert(`Server responded with status code ${error.response.status}: ${error.response.data}`);
         } else if (error.request) {
-          // The request was made but no response was received
           console.error('Error request:', error.request);
           alert('No response received from the server.');
         } 
@@ -388,7 +387,6 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
             </Grid>
             <Grid item xs={6}>
               <TextField
-                required
                 fullWidth
                 label="Email"
                 variant="outlined"
