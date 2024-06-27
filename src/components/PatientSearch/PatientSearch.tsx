@@ -39,7 +39,6 @@ const PatientSearch = () => {
             setLoading(true);
             const responseData = await getPatientSearch(lastName, selectedDate?.toISOString().split('T')[0] || '');
             const response = responseData.slice(1);
-            console.log("response", response);
             const transformedPatientData: PatientData[] = transformPatient(response.map((patient: ACLPatient) => patient.resource)).map((patient: { firstName: string; lastName: string; birthDate: string;  patientFhirId: string;}, index: number) => ({
                 id: index + 1,
                 firstName: patient.firstName,

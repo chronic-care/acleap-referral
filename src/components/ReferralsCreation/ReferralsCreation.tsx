@@ -77,10 +77,8 @@ const ReferralsCreation: React.FC<ReferralsCreationProps> = ({ open, onClose, on
             serviceRequestText: serviceRequested
         };
 
-        console.log("Form Data:", formData);
         const response = await createServiceRequest(formData);
         if(response){
-            console.log("response",response);
             alert("Service Request is created successfully");
         }
         onReferralCreated();

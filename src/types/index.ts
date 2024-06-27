@@ -31,7 +31,9 @@ export type ACLServiceRequest = {
     serviceRequestPatientId?: string,
     serviceRequestFHIRId?: string,
     serviceRequestPerformer?: string,
-    serviceRequestRequester?: string
+    serviceRequestRequester?: string,
+    serviceRequestPerformerReference?: string,
+    serviceRequestRequesterReference?: string
 }
 
 export type ACLTasks = {
@@ -60,4 +62,10 @@ export type ACLOrganization = {
     [x:string]: any,
     organizationName?: string,
     organizationId?: string,
+}
+
+export type ACLPerformer = {
+    [x:string]: any,
+    performerName?: string,
+    performerId?: string,
 }

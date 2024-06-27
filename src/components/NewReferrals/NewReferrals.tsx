@@ -5,12 +5,14 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
-import { ACLPatient, ACLServiceRequest, ACLTasks, ACLPractitionerRole } from "../../types";
+import { ACLPatient, ACLServiceRequest, ACLTasks, ACLPractitionerRole, ACLPerformer } from "../../types";
 import ReferralStatusDialog from "../ReferralStatusDialog";
-import { transformPatient ,transformServiceRequests, transformTasks, transformPractitionerRole } from "../../services/fhirUtil";
+import { transformPatient ,transformServiceRequests, transformTasks, transformPractitionerRole, transformPerformer } from "../../services/fhirUtil";
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Chip from '@mui/material/Chip';
 import pingServer from  "../../services/azureFhirResource"
+import getPractitionerWithID from "../../services/getPractitionerID";
+import getPerformer from "../../services/getPerformer";
 
 interface EnrichedServiceRequest extends ACLServiceRequest {
     firstName: string;
@@ -23,7 +25,7 @@ const colorChips:any = {
     "Received" : 'info',
     "Assigned" : 'success',
     "In progress" : 'primary',
-    "Entered in HMIS" : 'secondary',
+    "Completed" : 'secondary',
     "Rejected" : "error",
     "Contact unsuccessful" : "warning",
     // "Service not Needed" : "tertiary",
@@ -58,7 +60,7 @@ const NewReferrals = () => {
     const [selectedService, setSelectedService] = React.useState<ACLServiceRequest  | undefined>({})
     const [selectedTask, setSelectedTask] = React.useState<ACLTasks  | undefined>({})
     const [loading, setLoading] = React.useState(true);
-
+    const [performerNames, setPerformerNames] = React.useState<ACLPerformer[]>([]);
 
       React.useEffect(() => {
         getData();
@@ -85,10 +87,17 @@ const NewReferrals = () => {
         setTasks(transformedTasks);
         setPractitionerRole(transformedPractitionerRole);
 
+        const performerResponse = await getPerformer();
+        const performerResponseData = performerResponse.map((o: { resource: any; }) => o.resource);
+        const performers = performerResponseData.slice(1);
+        const transformedperformers: ACLPerformer[] = transformPerformer(performers);
+        setPerformerNames(transformedperformers);
+
         const data = transformedServices.map((item: ACLServiceRequest): EnrichedServiceRequest | null => {
             // Attempt to find a matching patient and task
             const matchingPatient = transformedPatient.find((p: ACLPatient) => p.patientFhirId === item.serviceRequestPatientId);
             const matchingTask = transformedTasks.find((x: ACLTasks) => x.taskServiceRequestId === item.serviceRequestFHIRId);
+            const matchingPerformer = transformedperformers.find((y: ACLPerformer) => y.performerId === item.serviceRequestPerformerReference);
 
             // Only proceed if both a matching patient and task are found and their data is complete
             if (matchingPatient && matchingTask &&
@@ -108,7 +117,9 @@ const NewReferrals = () => {
                     lastName: matchingPatient.lastName,
                     taskAuthoredDate: matchingTask.taskAuthoredDate,
                     taskBusinessStatus: matchingTask.taskBusinessStatus,
-                    taskOwner: matchedTaskOwner
+                    taskOwner: matchedTaskOwner,
+                    serviceRequestRequester: item.serviceRequestRequester ? item.serviceRequestRequester : (matchingTask.taskRequester ? matchingTask.taskRequester : "unknown"),
+                    serviceRequestPerformer: item.serviceRequestPerformer ? item.serviceRequestPerformer : matchingPerformer?.performerName
                 };
             }
 

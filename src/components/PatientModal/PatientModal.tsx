@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { ACLPatient, ACLServiceRequest, ACLTasks } from "../../types";
+import { ACLPatient, ACLPerformer, ACLServiceRequest, ACLTasks } from "../../types";
 import {
     Dialog, DialogTitle, DialogContent, Box, Typography, Grid, Card, Paper, Button, Divider, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import getServiceRequestTaskSearch from "../../services/searchServiceRequestTasks";
-import { transformServiceRequests, transformTasks } from "../../services/fhirUtil";
+import { transformPerformer, transformServiceRequests, transformTasks } from "../../services/fhirUtil";
 import ReferralsCreation from "../ReferralsCreation";
+import getPerformer from "../../services/getPerformer";
 
 interface EnrichedServiceRequest extends ACLServiceRequest {
     firstName: string;
@@ -39,13 +40,17 @@ const PatientModal = ({ open, onClose, patient }: PatientModalProps) => {
         if (patient?.patientFhirId) {
             try {
                 const resources: any = await getServiceRequestTaskSearch(patient.patientFhirId);
-                console.log("resources", resources);
                 const transformedServiceRequests: ACLServiceRequest[] = transformServiceRequests(resources.serviceRequests.map((p: any) => p.resource));
                 const transformedTasks: ACLTasks[] = transformTasks(resources.tasks.map((p: any) => p.resource));
-
+                const performerResponse = await getPerformer();
+                const performerResponseData = performerResponse.map((o: { resource: any; }) => o.resource);
+                const performers = performerResponseData.slice(1);
+                const transformedperformers: ACLPerformer[] = transformPerformer(performers);
+                
                 const data = transformedServiceRequests.map((item: ACLServiceRequest): EnrichedServiceRequest | null => {
                     const matchingPatient = patient;
                     const matchingTask = transformedTasks.find((x: ACLTasks) => x.taskServiceRequestId === item.serviceRequestFHIRId);
+                    const matchingPerformer = transformedperformers.find((y: ACLPerformer) => y.performerId === item.serviceRequestPerformerReference);
 
                     if (matchingPatient && matchingTask &&
                         typeof matchingPatient.firstName === 'string' && typeof matchingPatient.lastName === 'string' &&
@@ -61,6 +66,8 @@ const PatientModal = ({ open, onClose, patient }: PatientModalProps) => {
                             taskAuthoredDate: matchingTask.taskAuthoredDate,
                             taskBusinessStatus: matchingTask.taskBusinessStatus,
                             taskOwner: (matchedTaskOwner ? matchedTaskOwner : 'UnAssigned'),
+                            serviceRequestRequester: item.serviceRequestRequester ? item.serviceRequestRequester : (matchingTask.taskRequester ? matchingTask.taskRequester : "unknown"),
+                            serviceRequestPerformer: item.serviceRequestPerformer ? item.serviceRequestPerformer : matchingPerformer?.performerName
                         };
                     }
 

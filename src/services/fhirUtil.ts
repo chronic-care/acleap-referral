@@ -1,6 +1,7 @@
-import { Patient, ServiceRequest, Task, PractitionerRole, Organization } from "fhir/r4";
-import { ACLPatient, ACLServiceRequest, ACLTasks, ACLPractitionerRole, ACLOrganization} from "../types";
+import { Patient, ServiceRequest, Task, PractitionerRole, Organization, Practitioner } from "fhir/r4";
+import { ACLPatient, ACLServiceRequest, ACLTasks, ACLPractitionerRole, ACLOrganization, ACLPerformer} from "../types";
 import moment from 'moment';
+import getPractitionerWithID from "../services/getPractitionerID";
 
 export const transformPatient = (patient: any): ACLPatient => {
   return patient.map((patient: Patient ,index:number) => {
@@ -76,7 +77,9 @@ export const transformServiceRequests = (serviceRequests: ACLServiceRequest) => 
       const serviceRequestPatientId = serviceRequest.subject.reference?.replace("Patient/","");
       const serviceRequestFHIRId = serviceRequest?.id;
       const serviceRequestPerformer = serviceRequest?.performer?.[0]?.display;
+      const serviceRequestPerformerReference = serviceRequest?.performer?.[0]?.reference?.replace("Practitioner/", "");
       const serviceRequestRequester = serviceRequest?.requester?.display;
+      const serviceRequestRequesterReference = serviceRequest?.requester?.reference?.replace("Practitioner/", "");
 
       return {
         dateCreated,
@@ -87,7 +90,9 @@ export const transformServiceRequests = (serviceRequests: ACLServiceRequest) => 
         serviceRequestPatientId,
         serviceRequestFHIRId,
         serviceRequestPerformer,
-        serviceRequestRequester
+        serviceRequestPerformerReference,
+        serviceRequestRequester,
+        serviceRequestRequesterReference
       };
     });
 };
@@ -158,6 +163,19 @@ export const transformOrganizations = (Organizations: ACLOrganization ) => {
     return{
       organizationName,
       organizationId
+    }
+  });
+};
+
+export const transformPerformer = (Performer: ACLPerformer ) => {
+
+  return Performer.map((Performer: Practitioner) => {
+    const performerName = Performer?.name?.[0].given?.[0]  + " " + Performer?.name?.[0].family;
+    const performerId = Performer?.id;
+
+    return{
+      performerName,
+      performerId
     }
   });
 };
