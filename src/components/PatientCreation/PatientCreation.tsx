@@ -6,7 +6,8 @@ import {
   Divider,
   Tooltip,
   Snackbar,
-  Alert
+  Alert,
+  FormHelperText
 } from '@mui/material';
 import createPatient from '../../services/createPatient';
 
@@ -69,6 +70,10 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
       case 'lastName':
       case 'address1':
       case 'city':
+      case 'language':
+      case 'race':
+      case 'ethnicity':
+      case 'gender':
       case 'state':
         if (!value) {
           return 'Please enter valid details into the field';
@@ -223,7 +228,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
               />
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth>
+              <FormControl fullWidth error={!!formErrors.language}>
                 <InputLabel id="language-label" required>Language</InputLabel>
                 <Select
                   labelId="language-label"
@@ -244,10 +249,11 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   <MenuItem value="Tagalog">Tagalog</MenuItem>
                   <MenuItem value="Urdu">Urdu</MenuItem>
                 </Select>
+                <FormHelperText>{formErrors.language}</FormHelperText>
               </FormControl>
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth>
+              <FormControl fullWidth error={!!formErrors.race}>
                 <InputLabel id="race-label" required>Race</InputLabel>
                 <Select
                   labelId="race-label"
@@ -265,10 +271,11 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   <MenuItem value="Unknown">Unknown</MenuItem>
                   <MenuItem value="White">White</MenuItem>
                 </Select>
+                <FormHelperText>{formErrors.race}</FormHelperText>
               </FormControl>
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth>
+              <FormControl fullWidth error={!!formErrors.ethnicity}>
                 <InputLabel id="ethnicity-label" required>Ethnicity</InputLabel>
                 <Select
                   labelId="ethnicity-label"
@@ -282,11 +289,12 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   <MenuItem value="Not Hispanic or Latino">Not Hispanic or Latino</MenuItem>
                   <MenuItem value="Unknown">Unknown</MenuItem>
                 </Select>
+                <FormHelperText>{formErrors.ethnicity}</FormHelperText>
               </FormControl>
             </Grid>
             <Grid item xs={6}>
             <Tooltip title="Also called legal gender or gender marker" placement="top">
-              <FormControl fullWidth>
+              <FormControl fullWidth error={!!formErrors.gender}>
                 <InputLabel id="gender" required>Administrative Gender</InputLabel>
                 <Select
                   labelId="gender-label"
@@ -300,6 +308,7 @@ const PatientCreation = (props: PatientCreationDialogProps) => {
                   <MenuItem value="other">Other</MenuItem>
                   <MenuItem value="unknown">Unknown</MenuItem>
                 </Select>
+                <FormHelperText>{formErrors.gender}</FormHelperText>
               </FormControl>
             </Tooltip>
             </Grid>
